@@ -27,7 +27,11 @@ class PipTop extends Module {
     dontTouch(DataMem_mod.io)
     val ImmGen_mod = Module(new ImmGen)
     dontTouch(ImmGen_mod.io)
+<<<<<<< HEAD
+    val InstMem = Module(new InstMemory( "/home/masfiyan/Desktop/asm.txt"))
+=======
     val InstMem = Module(new InstMemory( "/home/laiba-khan/Downloads/InstMem"))
+>>>>>>> 89e481d5c559b232a672fb36d60b384eb795bb1b
     dontTouch(InstMem.io)
     val JalR_mod = Module(new JalR)
     dontTouch(JalR_mod.io)
@@ -53,6 +57,11 @@ class PipTop extends Module {
     dontTouch(HazardDetection_mod.io)
     val Structuralhazard_mod = Module(new StructuralHazard)
     dontTouch(Structuralhazard_mod.io)
+<<<<<<< HEAD
+    val AMOOperation = Module(new AtomicOperations)
+    dontTouch(AMOOperation.io)
+=======
+>>>>>>> 89e481d5c559b232a672fb36d60b384eb795bb1b
 
 
     val d = Wire(SInt(32.W))
@@ -87,6 +96,17 @@ class PipTop extends Module {
     Control_mod.io.opcode := IFID.io.mux_inst_out(6,0)
     ImmGen_mod.io.pc := IFID.io.mux_pc_out.asUInt
     ImmGen_mod.io.instr := IFID.io.mux_inst_out.asUInt()
+<<<<<<< HEAD
+
+    val nextamo = RegInit(0.B)
+    val nextNextamo = RegInit(0.B)
+    nextamo := Control_mod.io.AMO_out
+    nextNextamo := nextamo
+    dontTouch(nextNextamo)
+    AMOOperation.io.execute := nextNextamo
+
+=======
+>>>>>>> 89e481d5c559b232a672fb36d60b384eb795bb1b
     
     when (Control_mod.io.AMO_out){
         RegFile_mod.io.Reg1 := IFID.io.mux_inst_out(19, 15)
@@ -247,6 +267,19 @@ class PipTop extends Module {
     IDEX.io.func7_in := IFID.io.mux_inst_out(30)
     IDEX.io.rd_in := IFID.io.mux_inst_out(11,7)
 
+<<<<<<< HEAD
+    val inst = WireInit(0.U(32.W))
+    dontTouch(inst)
+    val nextinst = RegInit(0.U(32.W))
+    val high = IFID.io.mux_inst_out(6,0) === "b0101111".U
+    dontTouch(high)
+    when (IFID.io.mux_inst_out(6,0) === "b0101111".U){
+        inst := IFID.io.mux_inst_out
+        nextinst := inst
+    }
+
+=======
+>>>>>>> 89e481d5c559b232a672fb36d60b384eb795bb1b
     //Execute
     ForwardingUnit.io.IDEX_rs1 := IDEX.io.rs1_out 
     ForwardingUnit.io.IDEX_rs2:= IDEX.io.rs2_out
@@ -279,6 +312,12 @@ class PipTop extends Module {
             }
         }
 
+<<<<<<< HEAD
+    Alu_mod.io.amo := nextamo
+
+
+=======
+>>>>>>> 89e481d5c559b232a672fb36d60b384eb795bb1b
     val b = MuxLookup(ForwardingUnit.io.forward_b, 0.S, Array(
         (0.U) -> IDEX.io.rs2_data_out,
         (1.U) -> d,
@@ -312,12 +351,55 @@ class PipTop extends Module {
     MEMWB.io.EXMEM_rd := EXMEM.io.EXMEM_rd_out
     DataMem_mod.io.Addr := EXMEM.io.EXMEM_alu_out.asUInt()
     DataMem_mod.io.DataIn := EXMEM.io.EXMEM_rs2_out
+<<<<<<< HEAD
+    when (nextNextamo){
+        DataMem_mod.io.DataIn := AMOOperation.io.DataOut
+    }
+=======
+>>>>>>> 89e481d5c559b232a672fb36d60b384eb795bb1b
 
     RegFile_mod.io.write_Reg := MEMWB.io.MEMWB_rd_out
     RegFile_mod.io.Reg_write := MEMWB.io.MEMWB_reg_w_out
 
     //MEM_WB Pipeline
     MEMWB.io.in_dataMem := DataMem_mod.io.DataOut
+<<<<<<< HEAD
+    AMOOperation.io.DataIn := DataMem_mod.io.DataOut
+    AMOOperation.io.DataIn2 := EXMEM.io.EXMEM_rs2_out
+    AMOOperation.io.atomic_op := 0.U
+
+    switch(nextinst(31, 27)) {
+            is("b00001".U) { 
+                AMOOperation.io.atomic_op := 0.U
+            }
+            is("b00000".U) { 
+                AMOOperation.io.atomic_op := 1.U
+            }
+            is("b00100".U) { 
+                AMOOperation.io.atomic_op := 4.U
+            }
+            is("b01100".U) { 
+                AMOOperation.io.atomic_op := 2.U
+            }
+            is("b01000".U) { 
+                AMOOperation.io.atomic_op := 3.U
+            }
+            is("b10000".U) { 
+                AMOOperation.io.atomic_op := 6.U
+            }
+            is("b10100".U) { 
+                AMOOperation.io.atomic_op := 5.U
+            }
+            is("b11000".U) { 
+                AMOOperation.io.atomic_op := 8.U
+            }
+            is("b11100".U) { 
+                AMOOperation.io.atomic_op := 7.U
+            }
+    }
+
+=======
+>>>>>>> 89e481d5c559b232a672fb36d60b384eb795bb1b
     MEMWB.io.in_alu_out := EXMEM.io.EXMEM_alu_out
 
     //WriteBack
