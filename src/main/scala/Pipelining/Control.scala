@@ -5,6 +5,7 @@ import chisel3.util._
 class Control extends Module{
     val io = IO (new Bundle{
         val opcode = Input (UInt(7.W))
+        val func5 = Input(UInt(5.W))
         val memwrite = Output (Bool())
         val branch = Output (Bool())
         val memRead = Output (Bool())
@@ -139,19 +140,9 @@ class Control extends Module{
         io.next_pc_sel := 0.U
 
     }
+    //AMO 
     .elsewhen(io.opcode === "b0101111".U) { 
-        // io.memwrite := true.B
-        // io.branch := 0.B
-        // io.memRead := 1.B
-        // io.regWrite := true.B
-        // io.memtoReg := true.B
-        // io.aLUoperation := 0.U  
-        // io.operand_A_sel := 0.U 
-        // io.operand_B_sel := 0.U 
-        // io.extend_sel := 0.U  
-        // io.next_pc_sel := 0.U
         io.AMO_out := 1.B
-        //
         io.memwrite := 1.B 
         io.branch := 0.B 
         io.memRead := 1.B 
@@ -162,6 +153,34 @@ class Control extends Module{
         io.operand_B_sel := 1.B 
         io.extend_sel := 0.U 
         io.next_pc_sel := 0.U
+    }
+    .elsewhen(io.opcode === "b0101111".U) {
+        when (io.func5 === "b00010".U) { 
+            io.AMO_out := 0.B
+            io.memwrite := 0.B 
+            io.branch := 0.B 
+            io.memRead := 1.B  
+            io.regWrite := 1.B  
+            io.memtoReg := 1.B 
+            io.aLUoperation := 4.U 
+            io.operand_A_sel := 0.U 
+            io.operand_B_sel := 1.B 
+            io.extend_sel := 0.U 
+            io.next_pc_sel := 0.U
+        }
+        .elsewhen (io.func5 === "b00011".U) {
+            io.AMO_out := 1.B
+            io.memwrite := 1.B 
+            io.branch := 0.B 
+            io.memRead := 0.B 
+            io.regWrite := 1.B  
+            io.memtoReg := 1.B 
+            io.aLUoperation := 4.U 
+            io.operand_A_sel := 0.U 
+            io.operand_B_sel := 1.B 
+            io.extend_sel := 0.U 
+            io.next_pc_sel := 0.U
+        }
     }
     .otherwise {
         io.memwrite := 0.U

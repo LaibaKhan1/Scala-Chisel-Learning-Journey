@@ -27,7 +27,7 @@ class PipTop extends Module {
     dontTouch(DataMem_mod.io)
     val ImmGen_mod = Module(new ImmGen)
     dontTouch(ImmGen_mod.io)
-    val InstMem = Module(new InstMemory( "/home/masfiyan/Desktop/asm.txt"))
+    val InstMem = Module(new InstMemory( "/home/laiba-khan/Downloads/InstMem"))
     dontTouch(InstMem.io)
     val JalR_mod = Module(new JalR)
     dontTouch(JalR_mod.io)
@@ -55,6 +55,7 @@ class PipTop extends Module {
     dontTouch(Structuralhazard_mod.io)
     val AMOOperation = Module(new AtomicOperations)
     dontTouch(AMOOperation.io)
+    val LrSC_mod = Module(new LrSc)
 
 
     val d = Wire(SInt(32.W))
@@ -326,6 +327,7 @@ class PipTop extends Module {
 
     EXMEM.io.IDEX_rs2 := b
     EXMEM.io.alu_in := Alu_mod.io.out
+
 
     //Memory
     DataMem_mod.io.mem_read := EXMEM.io.EXMEM_memRd_out
